@@ -136,7 +136,7 @@ contract Uniswapv3Test is Test {
         dai.approve(address(singleSwap), 1000 * 1e18);
         console.log("approved");
 
-        uint256 amountIn = 1e18; 
+        uint256 amountIn = 1000 * 1e18; 
 
         uint256 amountOut = singleSwap.swapExactInputSingle(
             DAI,
