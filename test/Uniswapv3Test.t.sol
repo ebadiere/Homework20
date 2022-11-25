@@ -6,6 +6,9 @@ import "forge-std/console.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../src/SingleSwap.sol";
+
+
 
 /// @title An ERC-20 compatible ShameCoin.
 /// @author Gabriel Fior
@@ -14,9 +17,12 @@ contract Uniswapv3Test is Test {
     //using PoolAddress for address;
     ISwapRouter public swapRouter;
     IERC20 public dai;
+    SingleSwap singleSwap;
+
     address owner;
     address luckyUser;
     address ZERO_ADDRESS = address(0);
+
 
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant WETH9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -33,6 +39,8 @@ contract Uniswapv3Test is Test {
         owner = address(this);
         luckyUser = vm.addr(2);
         dai = IERC20(DAI);
+
+        singleSwap = new SingleSwap(swapRouter);
     }
 
     function testSwapExactInputSingleDAItoUSDC() public {
@@ -117,4 +125,30 @@ contract Uniswapv3Test is Test {
         );
         assertEq(amountOut, IERC20(BUSD).balanceOf(luckyUser));
     }
+
+   function testSwapExactInputSingleContractDAItoUSDC() public {    
+
+        address binanceUser = 0xDFd5293D8e347dFe59E90eFd55b2956a1343963d;
+        vm.startPrank(binanceUser);
+
+        console.log("singleSwap address: ", address(singleSwap));
+
+        dai.approve(address(singleSwap), 1000 * 1e18);
+        console.log("approved");
+
+        uint256 amountIn = 1e18; 
+
+        uint256 amountOut = singleSwap.swapExactInputSingle(
+            DAI,
+            USDC,
+            binanceUser,
+            luckyUser,
+            poolFeeDAIUSDC,
+            amountIn
+        );   
+
+        console.log("Amount out: ", amountOut); 
+        vm.stopPrank();
+
+   }
 }
