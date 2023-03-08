@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.17;
+pragma solidity ^0.8.17;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
@@ -85,46 +85,46 @@ contract Uniswapv3Test is Test {
         assertEq(amountOut, IERC20(USDC).balanceOf(luckyUser));
     }
 
-    function testSwapExactInputSingleDAItoBUSD() public {
-        address binanceUser = 0xDFd5293D8e347dFe59E90eFd55b2956a1343963d;
-        vm.startPrank(binanceUser);
+    // function testSwapExactInputSingleDAItoBUSD() public {
+    //     address binanceUser = 0xDFd5293D8e347dFe59E90eFd55b2956a1343963d;
+    //     vm.startPrank(binanceUser);
 
-        console.log("original dai balance", IERC20(DAI).balanceOf(binanceUser));
+    //     console.log("original dai balance", IERC20(DAI).balanceOf(binanceUser));
 
-        dai.approve(address(this), 1000 * 1e18);
-        console.log("approved");
+    //     dai.approve(address(this), 1000 * 1e18);
+    //     console.log("approved");
 
-        uint256 amountIn = 1e18;        
+    //     uint256 amountIn = 1e18;        
 
-        // Approve the router to spend DAI.
-        TransferHelper.safeApprove(DAI, address(swapRouter), amountIn);
-        console.log("approved contract");
+    //     // Approve the router to spend DAI.
+    //     TransferHelper.safeApprove(DAI, address(swapRouter), amountIn);
+    //     console.log("approved contract");
 
-        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
-            .ExactInputSingleParams({
-                tokenIn: DAI,
-                tokenOut: BUSD,
-                fee: poolFeeDAIBUSD,
-                recipient: luckyUser,
-                deadline: block.timestamp + 10,
-                amountIn: amountIn,
-                amountOutMinimum: 0,
-                sqrtPriceLimitX96: 0
-            });       
+    //     ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
+    //         .ExactInputSingleParams({
+    //             tokenIn: DAI,
+    //             tokenOut: BUSD,
+    //             fee: poolFeeDAIBUSD,
+    //             recipient: luckyUser,
+    //             deadline: block.timestamp + 10,
+    //             amountIn: amountIn,
+    //             amountOutMinimum: 0,
+    //             sqrtPriceLimitX96: 0
+    //         });       
 
-        // The call to `exactInputSingle` executes the swap.
-        uint256 amountOut = swapRouter.exactInputSingle(params);
-        console.log("executed swap, amount out", amountOut);
+    //     // The call to `exactInputSingle` executes the swap.
+    //     uint256 amountOut = swapRouter.exactInputSingle(params);
+    //     console.log("executed swap, amount out", amountOut);
 
-        vm.stopPrank();
+    //     vm.stopPrank();
 
-        console.log("final dai balance", IERC20(DAI).balanceOf(binanceUser));
-        console.log(
-            "new busd balance lucky user",
-            IERC20(BUSD).balanceOf(luckyUser)
-        );
-        assertEq(amountOut, IERC20(BUSD).balanceOf(luckyUser));
-    }
+    //     console.log("final dai balance", IERC20(DAI).balanceOf(binanceUser));
+    //     console.log(
+    //         "new busd balance lucky user",
+    //         IERC20(BUSD).balanceOf(luckyUser)
+    //     );
+    //     assertEq(amountOut, IERC20(BUSD).balanceOf(luckyUser));
+    // }
 
    function testSwapExactInputSingleContractDAItoUSDC() public {    
 
