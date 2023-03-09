@@ -41,32 +41,37 @@ contract UniswapV2Swap {
     }
 
     // Swap DAI -> WETH -> USDC
-    // function swapMultiHopExactAmountIn(
-    //     uint amountIn,
-    //     uint amountOutMin
-    // ) external returns (uint amountOut) {
-    //     dai.transferFrom(msg.sender, address(this), amountIn);
-    //     dai.approve(address(swapRouter), amountIn);
+    function swapMultiHopExactAmountIn(
+        address tokenInAddress,
+        address[] memory path,
+        uint amountIn,
+        uint amountOutMin
+    ) external returns (uint amountOut) {
+        IERC20 tokenIn = IERC20(tokenInAddress);
+    
+        tokenIn.transferFrom(msg.sender, address(this), amountIn);
+        tokenIn.approve(address(swapRouter), amountIn);
 
-    //     address[] memory path;
-    //     path = new address[](3);
-    //     path[0] = DAI;
-    //     path[1] = WETH;
-    //     path[2] = USDC;
 
-    //     uint[] memory amounts = swapRouter.swapExactTokensForTokens(
-    //         amountIn,
-    //         amountOutMin,
-    //         path,
-    //         msg.sender,
-    //         block.timestamp
-    //     );
+        // address[] memory path;
+        // path = new address[](3);
+        // path[0] = DAI;
+        // path[1] = WETH;
+        // path[2] = USDC;
 
-    //     // amounts[0] = DAI amount
-    //     // amounts[1] = WETH amount
-    //     // amounts[2] = USDC amount
-    //     return amounts[2];
-    // }
+        uint[] memory amounts = swapRouter.swapExactTokensForTokens(
+            amountIn,
+            amountOutMin,
+            path,
+            msg.sender,
+            block.timestamp
+        );
+
+        // amounts[0] = DAI amount
+        // amounts[1] = WETH amount
+        // amounts[2] = USDC amount
+        return amounts[2];
+    }
 
     // Swap WETH to DAI
     // function swapSingleHopExactAmountOut(
