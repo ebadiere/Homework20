@@ -17,15 +17,18 @@ contract Uniswapv2Test is Test {
     address public constant WETH9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address public constant BUSD = 0x4Fabb145d64652a948d72533023f6E7A623C7C53;
+    address public constant SHIB = 0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE;
 
     uint24 public constant fee = 3000;
 
     address binanceUser = 0xDFd5293D8e347dFe59E90eFd55b2956a1343963d;
+    address shibAccountToImpersonate = 0xdEAD000000000000000042069420694206942069;
     address owner;
     address luckyUser;
     IERC20 public dai;
     IERC20 public usdc;
     IERC20 public weth;
+    IERC20 public shib;
 
     function setUp() public {
         owner = address(this);
@@ -33,9 +36,31 @@ contract Uniswapv2Test is Test {
         dai = IERC20(DAI);
         usdc = IERC20(USDC);
         weth = IERC20(WETH9);
+        shib = IERC20(SHIB);
 
         swapRouter = IUniswapV2Router(UNISWAP_V2_ROUTER);
         swap = new UniswapV2Swap(swapRouter);        
+    }
+
+    function testSwapSingleHopExactAmountInWETHtoSHIB() public {
+        // msg.sender must approve this contract
+        vm.startPrank(shibAccountToImpersonate);
+        console.log("Shib User WETH9 beginning balance: ", weth.balanceOf(shibAccountToImpersonate));
+
+        weth.approve(address(this), 10 * 1e18);
+        console.log("approved");
+
+        uint256 amountIn = 1e18;        
+
+        // Approve the router to spend DAI.
+        weth.approve(address(swapRouter), amountIn);
+        weth.approve(address(swap), amountIn);
+        console.log("approved contract");
+
+        uint amountOut = swap.swapSingleHopExactAmountIn(WETH9, SHIB, amountIn, 0);
+        console.log("Amount out: ${amountOut} : ", amountOut );
+        console.log("SHIB User WETH9 finishing balance: ", weth.balanceOf(shibAccountToImpersonate));
+
     }
 
     function testSwapSingleHopExactAmountInDAItoWETH() public {
